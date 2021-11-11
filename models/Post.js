@@ -14,6 +14,13 @@ const PostSchema = new mongoose.Schema(
     imageURL: {
       type: String,
     },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    comments: [
+      {
+        comment: String,
+        postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      },
+    ],
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -37,7 +44,18 @@ const PostValidator = (data) => {
   return schema.validate(data);
 };
 
+// comment validator
+const CommentValidator = (data) => {
+  const schema = Joi.object({
+    comment: Joi.string().min(1).max(500),
+    postId: Joi.string(),
+  });
+
+  return schema.validate(data);
+};
+
 module.exports = {
   Post,
   PostValidator,
+  CommentValidator,
 };
