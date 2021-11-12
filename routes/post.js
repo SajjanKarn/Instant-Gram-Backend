@@ -116,8 +116,6 @@ router.delete("/delete/:postId", auth, async (req, res) => {
       "_id"
     );
 
-    console.log(post);
-    console.log(req.user);
     if (post.postedBy._id.toString() !== req.user._id.toString()) {
       return res
         .status(403)
