@@ -57,7 +57,7 @@ router.put("/like", auth, async (req, res) => {
         postId,
         { $push: { likes: req.user._id } },
         { new: true }
-      ).populate("comments.postedBy", "_id name");
+      ).populate("postedBy comments.postedBy", "_id name");
 
       if (likeResult) {
         return res.status(200).json({ ...likeResult._doc });
@@ -67,7 +67,7 @@ router.put("/like", auth, async (req, res) => {
         postId,
         { $pull: { likes: req.user._id } },
         { new: true }
-      ).populate("comments.postedBy", "_id name");
+      ).populate("postedBy comments.postedBy", "_id name");
       if (unLikeResult) {
         return res.status(200).json({ ...unLikeResult._doc });
       }
@@ -102,5 +102,36 @@ router.put(
     }
   }
 );
+
+router.delete("/delete/:postId", auth, async (req, res) => {
+  const { postId } = req.params;
+  if (!postId)
+    return res
+      .status(400)
+      .json({ success: false, error: "Please enter postId" });
+
+  try {
+    const post = await Post.findOne({ _id: postId }).populate(
+      "postedBy",
+      "_id"
+    );
+
+    console.log(post);
+    console.log(req.user);
+    if (post.postedBy._id.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ success: false, error: "Can't delete other user posts!" });
+    }
+
+    // else delete...
+    const result = await post.remove();
+
+    return res.status(200).json({ success: true, ...result._doc });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err });
+  }
+});
 
 module.exports = router;
