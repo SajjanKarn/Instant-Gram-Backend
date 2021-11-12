@@ -91,7 +91,7 @@ router.put(
           $push: { comments: { comment, postedBy: req.user._id } },
         },
         { new: true }
-      ).populate("comments.postedBy", "_id name");
+      ).populate("postedBy comments.postedBy", "_id name");
 
       if (result) {
         return res.status(200).json({ success: true, ...result._doc });
