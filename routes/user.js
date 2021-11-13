@@ -1,8 +1,8 @@
 const router = require("express").Router();
+const mongoose = require("mongoose");
 
 const { Post } = require("../models/Post");
 const { User } = require("../models/User");
-const validator = require("../middlewares/validator");
 const auth = require("../middlewares/auth");
 
 router.get("/user/:userId", auth, async (req, res) => {
