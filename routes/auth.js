@@ -60,10 +60,6 @@ router.post("/signup", validator(RegisterValidator), async (req, res) => {
   }
 });
 
-router.get("/protect", auth, (req, res) => {
-  res.send(req.user);
-});
-
 router.get("/me", auth, async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.user._id }).select("-password");
