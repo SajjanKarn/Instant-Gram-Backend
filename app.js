@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const xss = require("xss-clean");
+const mongoSanitize = require("express-mongo-sanitize");
 
 const connectDB = require("./config/db");
 
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV === "development ") {
 }
 app.use(cors());
 app.use(xss());
+app.use(mongoSanitize());
 
 // routes
 app.use(require("./routes/auth"));
