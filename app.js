@@ -18,6 +18,7 @@ app.use(cors());
 // routes
 app.use(require("./routes/auth"));
 app.use(require("./routes/post"));
+app.use(require("./routes/user"));
 
 // server config
 const PORT = process.env.PORT || 8000;

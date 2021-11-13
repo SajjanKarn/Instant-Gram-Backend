@@ -4,6 +4,7 @@ const { Post, PostValidator, CommentValidator } = require("../models/Post");
 const validator = require("../middlewares/validator");
 const auth = require("../middlewares/auth");
 
+// returns all posts.
 router.get("/allpost", auth, async (req, res) => {
   try {
     const allPosts = await Post.find().populate(
@@ -18,6 +19,7 @@ router.get("/allpost", auth, async (req, res) => {
   }
 });
 
+// returns logged in user posts.
 router.get("/mypost", auth, async (req, res) => {
   try {
     const userPosts = await Post.find({ postedBy: req.user._id });
@@ -29,6 +31,7 @@ router.get("/mypost", auth, async (req, res) => {
   }
 });
 
+// creates a new post.
 router.post(
   "/createpost",
   [auth, validator(PostValidator)],
@@ -47,6 +50,7 @@ router.post(
   }
 );
 
+// like unlike a post.
 router.put("/like", auth, async (req, res) => {
   const { postId } = req.body;
   const post = await Post.findOne({ _id: postId });
@@ -78,6 +82,7 @@ router.put("/like", auth, async (req, res) => {
   }
 });
 
+// comment on a post.
 router.put(
   "/comment",
   [auth, validator(CommentValidator)],
@@ -103,6 +108,7 @@ router.put(
   }
 );
 
+// delete a post.
 router.delete("/delete/:postId", auth, async (req, res) => {
   const { postId } = req.params;
   if (!postId)
