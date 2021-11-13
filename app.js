@@ -2,6 +2,7 @@ require("dotenv").config({ path: "./config/config.env" });
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const xss = require("xss-clean");
 
 const connectDB = require("./config/db");
 
@@ -14,6 +15,7 @@ if (process.env.NODE_ENV === "development ") {
   console.log(`morgan enabled...`);
 }
 app.use(cors());
+app.use(xss());
 
 // routes
 app.use(require("./routes/auth"));

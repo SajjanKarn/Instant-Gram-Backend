@@ -49,7 +49,7 @@ router.put("/follow", auth, async (req, res) => {
         { $push: { following: userId } },
         { new: true }
       );
-      return res.status(200).json({ success: true, ...userHasFollowed._doc });
+      return res.status(200).json({ ...userToFollow._doc });
     } else {
       const userToUnfollow = await User.findByIdAndUpdate(
         userId,
@@ -61,7 +61,7 @@ router.put("/follow", auth, async (req, res) => {
         { $pull: { following: userId } },
         { new: true }
       );
-      return res.status(200).json({ success: true, ...userHasUnfollowed._doc });
+      return res.status(200).json({ ...userToUnfollow._doc });
     }
     const userHasFollowed = await User.findByIdAndUpdate(
       req.user._id,
