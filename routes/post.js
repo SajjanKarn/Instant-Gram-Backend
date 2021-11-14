@@ -138,4 +138,19 @@ router.delete("/delete/:postId", auth, async (req, res) => {
   }
 });
 
+// get followed user posts.
+router.get("/followingpost", auth, async (req, res) => {
+  try {
+    console.log(req.user);
+    const allPosts = await Post.find({
+      postedBy: { $in: req.user.following },
+    }).populate("postedBy comments.postedBy", "-password");
+
+    return res.status(200).json({ success: true, posts: allPosts });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err });
+  }
+});
+
 module.exports = router;
