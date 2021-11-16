@@ -38,7 +38,7 @@ router.post("/signin", validator(LoginValidator), async (req, res) => {
 });
 
 router.post("/signup", validator(RegisterValidator), async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, profileImage } = req.body;
 
   try {
     const doesUserAlreadyExists = await User.findOne({ email });
@@ -50,7 +50,12 @@ router.post("/signup", validator(RegisterValidator), async (req, res) => {
       });
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = new User({ name, email, password: hashedPassword });
+    const newUser = new User({
+      name,
+      email,
+      profileImage,
+      password: hashedPassword,
+    });
     const user = await newUser.save();
 
     return res.status(201).json({ success: true, ...user._doc });
