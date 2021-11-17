@@ -62,6 +62,30 @@ exports.sign_up = async (req, res) => {
   }
 };
 
+exports.change_password = async (req, res) => {
+  const { password, newPassword } = req.body;
+  try {
+    const user = await User.findOne({ _id: req.user._id });
+    const doesPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (!doesPasswordMatch)
+      return res
+        .status(403)
+        .json({ success: false, error: "Incorrect current password" });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    const result = await User.updateOne(
+      { _id: req.user._id },
+      { password: hashedPassword }
+    );
+
+    return res.status(200).json({ success: true, ...result._doc });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err });
+  }
+};
+
 exports.user_me = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.user._id }).select("-password");

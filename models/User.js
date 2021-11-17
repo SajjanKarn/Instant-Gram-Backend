@@ -45,8 +45,19 @@ const LoginValidator = (data) => {
   return schema.validate(data);
 };
 
+// change password validator.
+const ChangePasswordValidator = (data) => {
+  const schema = Joi.object({
+    password: Joi.string(),
+    newPassword: Joi.string().min(6).max(50).required(),
+  });
+
+  return schema.validate(data);
+};
+
 module.exports = {
   User,
   RegisterValidator,
   LoginValidator,
+  ChangePasswordValidator,
 };
