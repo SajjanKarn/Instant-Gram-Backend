@@ -69,3 +69,22 @@ exports.follow_user = async (req, res) => {
     return res.status(500).json({ success: false, error: err });
   }
 };
+
+exports.search_user = async (req, res) => {
+  if (!req.body.query)
+    return res
+      .status(400)
+      .json({ success: false, error: "Please enter a name" });
+
+  try {
+    let userPattern = new RegExp("^" + req.body.query);
+    const users = await User.find({
+      name: { $regex: userPattern, $options: "i" },
+    });
+
+    return res.status(200).json({ success: true, users });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err });
+  }
+};
