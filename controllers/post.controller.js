@@ -1,4 +1,5 @@
 const { Post } = require("../models/Post");
+const mongoose = require("mongoose");
 
 exports.all_post = async (req, res) => {
   try {
@@ -126,6 +127,54 @@ exports.following_post = async (req, res) => {
     const allPosts = await Post.find({
       postedBy: { $in: req.user.following },
     }).populate("postedBy comments.postedBy", "-password");
+
+    return res.status(200).json({ success: true, posts: allPosts });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err });
+  }
+};
+
+exports.delete_comment = async (req, res) => {
+  const { commentId, postId } = req.body;
+
+  if (!commentId || !postId)
+    return res
+      .status(400)
+      .json({ success: false, error: "please provide post id and comment id" });
+
+  if (!mongoose.isValidObjectId(commentId))
+    return res
+      .status(400)
+      .json({ success: false, error: "valid comment id is required." });
+
+  try {
+    const post = await Post.findOne({ _id: postId }).populate(
+      "comments.postedBy",
+      "_id"
+    );
+
+    const userComment = post.comments.find(
+      (x) => x._id.toString() === commentId.toString()
+    );
+
+    if (userComment.postedBy._id.toString() !== req.user._id.toString()) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Cannot delete other user comments!" });
+    }
+
+    // if the comment is users own comment. delete it
+    const deletedPost = await Post.findByIdAndUpdate(
+      postId,
+      { $pull: { comments: { _id: commentId } } },
+      { new: true }
+    );
+
+    const allPosts = await Post.find().populate(
+      "postedBy comments.postedBy",
+      "-password"
+    );
 
     return res.status(200).json({ success: true, posts: allPosts });
   } catch (err) {

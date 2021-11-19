@@ -13,6 +13,7 @@ const {
   comment_post,
   delete_post,
   following_post,
+  delete_comment,
 } = require("../controllers/post.controller");
 
 // returns all posts.
@@ -35,5 +36,8 @@ router.delete("/delete/:postId", auth, delete_post);
 
 // get followed user posts.
 router.get("/followingpost", auth, following_post);
+
+// delete a comment.
+router.delete("/comment", auth, delete_comment);
 
 module.exports = router;
