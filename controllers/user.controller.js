@@ -99,3 +99,41 @@ exports.get_all_user = async (req, res) => {
     return res.status(500).json({ success: false, error: err });
   }
 };
+
+exports.delete_user = async (req, res) => {
+  const userId = req.user._id;
+
+  try {
+    const userPosts = await Post.find({ postedBy: userId });
+    const deleteUserPosts = await Post.deleteMany({
+      _id: {
+        $in: userPosts,
+      },
+    });
+    const removeLikes = await Post.updateMany(
+      { likes: userId },
+      { $pull: { likes: userId } }
+    );
+    const removeComments = await Post.updateMany(
+      {
+        comments: { $elemMatch: { postedBy: userId } },
+      },
+      { $pull: { comments: { postedBy: userId } } }
+    );
+    const removeFollowers = await User.updateMany(
+      { followers: userId },
+      { $pull: { followers: userId } }
+    );
+    const removeFollowings = await User.updateMany(
+      { following: userId },
+      { $pull: { following: userId } }
+    );
+
+    const deletedUser = await User.deleteOne({ _id: userId });
+
+    return res.status(200).json({ success: true, message: "deleted user" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err });
+  }
+};
