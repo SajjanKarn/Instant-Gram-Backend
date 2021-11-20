@@ -17,6 +17,9 @@ const UserSchema = new mongoose.Schema({
   profileImage: {
     type: String,
   },
+  bio: {
+    type: String,
+  },
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
@@ -55,9 +58,19 @@ const ChangePasswordValidator = (data) => {
   return schema.validate(data);
 };
 
+// bio update validator
+const BioValidator = (data) => {
+  const schema = Joi.object({
+    bio: Joi.string().min(1).max(300).required(),
+  });
+
+  return schema.validate(data);
+};
+
 module.exports = {
   User,
   RegisterValidator,
   LoginValidator,
   ChangePasswordValidator,
+  BioValidator,
 };
