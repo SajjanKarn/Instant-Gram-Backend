@@ -140,7 +140,7 @@ exports.delete_user = async (req, res) => {
 
 exports.update_bio = async (req, res) => {
   try {
-    const bio = req.body;
+    const { bio } = req.body;
 
     const user = await User.findByIdAndUpdate(req.user._id, { bio });
     return res.status(200).json({ success: true, message: "Bio Updated!" });
