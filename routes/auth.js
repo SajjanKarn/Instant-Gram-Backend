@@ -14,6 +14,9 @@ const {
   sign_up,
   user_me,
   change_password,
+  forgot_password,
+  check_reset_link,
+  reset_password,
 } = require("../controllers/auth.controller");
 
 router.post("/signin", validator(LoginValidator), sign_in);
@@ -25,6 +28,10 @@ router.put(
   [validator(ChangePasswordValidator), auth],
   change_password
 );
+
+router.post("/forgot-password", forgot_password);
+router.post("/check-link", check_reset_link);
+router.put("/reset-password", reset_password);
 
 router.get("/me", auth, user_me);
 
