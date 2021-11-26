@@ -131,7 +131,7 @@ exports.forgot_password = async (req, res) => {
       to: email, // list of receivers
       subject: "Reset Your Password ✔", // Subject line
       text: "You can reset your password from the below link. The link is only valid for 15 minutes.",
-      html: `<a href="http://localhost:3000/reset-password/${payload._id}/${token}">Reset Password</a>`,
+      html: `<a href="https://instagram.sajjan.tech/reset-password/${payload._id}/${token}">Reset Password</a>`,
     });
 
     return res.status(200).json({
