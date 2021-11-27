@@ -20,6 +20,7 @@ const {
   reset_password,
 } = require("../controllers/auth.controller");
 
+// rate limiter for forgot password route.
 const resetAccountLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes.
   max: 2, // start blocking after 2 requests
@@ -33,9 +34,26 @@ const resetAccountLimiter = rateLimit({
   },
 });
 
+// rate limit for signup users.
+const signUpRateLimiter = rateLimit({
+  windowMs: 20 * 60 * 1000, // 20 minutes.
+  max: 2, // start blocking after 2 requests
+  handler: (req, res, next) => {
+    return res.status(429).json({
+      error: "Too many signup requests from your computer 😡",
+    });
+
+    next();
+  },
+});
+
 router.post("/signin", validator(LoginValidator), sign_in);
 
-router.post("/signup", validator(RegisterValidator), sign_up);
+router.post(
+  "/signup",
+  [validator(RegisterValidator), signUpRateLimiter],
+  sign_up
+);
 
 router.put(
   "/password",

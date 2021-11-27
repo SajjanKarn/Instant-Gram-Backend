@@ -16,6 +16,19 @@ const {
   delete_comment,
 } = require("../controllers/post.controller");
 
+// rate limit for creating posts.
+const createPostLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 20 minutes.
+  max: 3, // start blocking after 2 requests
+  handler: (req, res, next) => {
+    return res.status(429).json({
+      error: "You can only make 3 posts per hour",
+    });
+
+    next();
+  },
+});
+
 // returns all posts.
 router.get("/allpost", auth, all_post);
 
@@ -23,7 +36,11 @@ router.get("/allpost", auth, all_post);
 router.get("/mypost", auth, my_post);
 
 // creates a new post.
-router.post("/createpost", [auth, validator(PostValidator)], create_post);
+router.post(
+  "/createpost",
+  [auth, validator(PostValidator), createPostLimiter],
+  create_post
+);
 
 // like unlike a post.
 router.put("/like", auth, like_post);
