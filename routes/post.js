@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const rateLimit = require("express-rate-limit");
 
 const { PostValidator, CommentValidator } = require("../models/Post");
 
