@@ -15,9 +15,9 @@ if (process.env.NODE_ENV === "development ") {
   app.use(morgan("tiny"));
   console.log(`morgan enabled...`);
 }
-app.use(cors());
-app.use(xss());
-app.use(mongoSanitize());
+app.use(cors()); // disable cors.
+app.use(xss()); // sanitize request body for xss attacks.
+app.use(mongoSanitize()); // prevent NoSQL injection attacks.
 
 // routes
 app.use(require("./routes/auth"));

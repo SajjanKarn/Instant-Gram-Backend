@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const rateLimit = require("express-rate-limit");
 
 const {
   RegisterValidator,
@@ -19,6 +20,19 @@ const {
   reset_password,
 } = require("../controllers/auth.controller");
 
+const resetAccountLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes.
+  max: 2, // start blocking after 2 requests
+  handler: (req, res, next) => {
+    return res.status(429).json({
+      error:
+        "Too many requests for resset link, please try again after half an hour.",
+    });
+
+    next();
+  },
+});
+
 router.post("/signin", validator(LoginValidator), sign_in);
 
 router.post("/signup", validator(RegisterValidator), sign_up);
@@ -29,7 +43,7 @@ router.put(
   change_password
 );
 
-router.post("/forgot-password", forgot_password);
+router.post("/forgot-password", resetAccountLimiter, forgot_password);
 router.post("/check-link", check_reset_link);
 router.put("/reset-password", reset_password);
 
