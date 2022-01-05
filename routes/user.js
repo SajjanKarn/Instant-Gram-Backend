@@ -12,6 +12,8 @@ const {
   get_all_user,
   delete_user,
   update_bio,
+  get_all_followers,
+  get_all_following,
 } = require("../controllers/user.controller");
 
 router.get("/user/:userId", auth, get_user_profile);
@@ -25,5 +27,9 @@ router.get("/allusers", auth, get_all_user);
 router.delete("/deleteuser", auth, delete_user);
 
 router.put("/updatebio", [auth, validator(BioValidator), update_bio]);
+
+router.get("/myfollowers", auth, get_all_followers);
+
+router.get("/myfollowing", auth, get_all_following);
 
 module.exports = router;

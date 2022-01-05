@@ -149,3 +149,34 @@ exports.update_bio = async (req, res) => {
     return res.status(500).json({ success: false, error: err });
   }
 };
+
+exports.get_all_followers = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const followers = await User.findOne({ _id: userId })
+      .select("followers")
+      .populate("followers");
+    return res
+      .status(200)
+      .json({ success: true, followers: followers.followers });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err });
+  }
+};
+
+exports.get_all_following = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const following = await User.findOne({ _id: userId })
+      .select("following")
+      .populate("following");
+
+    return res
+      .status(200)
+      .json({ success: true, following: following.following });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err });
+  }
+};
